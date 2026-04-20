@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+    command: ["/app/server", "-config-path", "config/dev/config.yaml"]
+
+  app-debug:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    ports:
+      - "8080:8080"
+      - "2346:2346"
+    volumes:
+      - .:/app                          # mount local source into container
+    security_opt:
+      - "seccomp:unconfined"
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
